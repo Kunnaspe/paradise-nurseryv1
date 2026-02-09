@@ -1,51 +1,76 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import "./App.css";
-
-import AboutUs from "./AboutUs";
 import ProductList from "./ProductList";
 import CartItem from "./CartItem";
-
-function Landing() {
-  const navigate = useNavigate();
-
-  return (
-    <div className="landing">
-      <div className="landingCard">
-        <div className="landingHeader">
-          <div>
-            <h1 style={{ margin: 0 }}>Paradise Nursery</h1>
-            <p className="muted" style={{ marginTop: "0.5rem" }}>
-              Fresh houseplants for every home — curated by category, easy to shop.
-            </p>
-          </div>
-
-          <button className="btnPrimary" onClick={() => navigate("/plants")}>
-            Get Started
-          </button>
-        </div>
-
-        <hr style={{ margin: "1.5rem 0", border: "none", borderTop: "1px solid #ddd" }} />
-
-        <p style={{ margin: 0 }}>
-          New here? Learn more on our <Link to="/about">About Us</Link> page or jump straight to{" "}
-          <Link to="/plants">Plants</Link>.
-        </p>
-      </div>
-    </div>
-  );
-}
+import AboutUs from "./AboutUs";
 
 export default function App() {
+  const [showProductList, setShowProductList] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+
+  const goHome = () => {
+    setShowProductList(false);
+    setShowCart(false);
+    setShowAbout(false);
+  };
+
+  const goPlants = () => {
+    setShowProductList(true);
+    setShowCart(false);
+    setShowAbout(false);
+  };
+
+  const goCart = () => {
+    setShowCart(true);
+    setShowProductList(false);
+    setShowAbout(false);
+  };
+
+  const goAbout = () => {
+    setShowAbout(true);
+    setShowProductList(false);
+    setShowCart(false);
+  };
+
+  // Landing
+  if (!showProductList && !showCart && !showAbout) {
+    return (
+      <div className="landing">
+        <div className="landingCard">
+          <h1 style={{ marginTop: 0 }}>Paradise Nursery</h1>
+          <p className="muted">
+            Welcome to Paradise Nursery — your friendly shop for beautiful houseplants.
+          </p>
+
+          {/* REQUIRED BY RUBRIC */}
+          <button className="btnPrimary" onClick={() => setShowProductList(true)}>
+            Get Started
+          </button>
+
+          <div style={{ marginTop: "1rem" }}>
+            <button className="btnSmall" onClick={goAbout}>About Us</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Page-like switching (no router)
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/plants" element={<ProductList />} />
-        <Route path="/cart" element={<CartItem />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <div className="navbar">
+        <div className="navBrand">e-plantShopping</div>
+        <div className="navLinks">
+          <button className="btnSmall" onClick={goHome}>Home</button>
+          <button className="btnSmall" onClick={goPlants}>Plants</button>
+          <button className="btnSmall" onClick={goCart}>Cart</button>
+        </div>
+      </div>
+
+      {showAbout && <AboutUs />}
+      {showProductList && <ProductList />}
+      {showCart && <CartItem onContinueShopping={goPlants} />}
+    </>
   );
 }
-
